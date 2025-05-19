@@ -125,7 +125,7 @@ export function Plugins() {
       {/* toolbar plugins */}
       <ToolbarPlugin>
         {({ blockType }) => (
-          <div className="vertical-align-middle sticky top-0 z-10 flex gap-2 overflow-auto border-b p-1">
+          <div className="vertical-align-middle sticky top-0 z-10 flex h-16 flex-row items-center gap-2 overflow-auto border-b p-1">
             <HistoryToolbarPlugin />
             <BlockFormatDropDown>
               <FormatParagraph />

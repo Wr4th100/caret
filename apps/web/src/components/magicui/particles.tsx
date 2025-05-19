@@ -86,7 +86,8 @@ export const Particles: React.FC<ParticlesProps> = ({
   ...props
 }) => {
   const { theme } = useTheme();
-  color = theme === 'dark' ? '#ffffff' : '#000000';
+  console.log('Theme', theme);
+  color = theme === 'light' ? '#000000' : '#ffffff';
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);

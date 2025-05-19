@@ -105,7 +105,7 @@ export function ElementFormatToolbarPlugin() {
       value={elementFormat}
       defaultValue={elementFormat}
       onValueChange={handleValueChange}
-      className="flex gap-1"
+      className="flex"
     >
       {/* Alignment toggles */}
       {Object.entries(ELEMENT_FORMAT_OPTIONS).map(([value, option]) => (
@@ -115,7 +115,7 @@ export function ElementFormatToolbarPlugin() {
           variant={'outline'}
           aria-label={option.name}
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8"
         >
           {option.icon}
         </ToggleGroupItem>
