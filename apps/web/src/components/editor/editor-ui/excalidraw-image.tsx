@@ -9,7 +9,6 @@ import * as React from 'react';
 import { JSX, useEffect, useState } from 'react';
 import { exportToSvg } from '@excalidraw/excalidraw';
 import { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
-import { ExcalidrawElement, NonDeleted } from '@excalidraw/excalidraw/types/element/types';
 
 type ImageType = 'svg' | 'canvas';
 
@@ -27,7 +26,9 @@ type Props = {
   /**
    * The Excalidraw elements to be rendered as an image
    */
-  elements: NonDeleted<ExcalidrawElement>[];
+  // elements: NonDeleted<ExcalidrawElement>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  elements: any;
   /**
    * The Excalidraw files associated with the elements
    */

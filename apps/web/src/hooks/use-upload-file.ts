@@ -41,7 +41,7 @@ export function useUploadFile({
 
       setUploadedFile(res[0]);
 
-      onUploadComplete?.(res[0]);
+      onUploadComplete?.(res[0]!);
 
       return uploadedFile;
     } catch (error) {
