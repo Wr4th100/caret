@@ -1,0 +1,42 @@
+{
+  "name": "@caret/db",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./src/client.ts"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "default": "./src/schema/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "db:generate": "bun with-env drizzle-kit generate",
+    "db:migrate": "bun with-env drizzle-kit migrate",
+    "db:push": "bun with-env drizzle-kit push",
+    "db:studio": "bun with-env drizzle-kit studio",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "devDependencies": {
+    "@caret/eslint-config": "*",
+    "@caret/typescript-config": "*",
+    "dotenv": "^16.5.0",
+    "drizzle-kit": "^0.31.1",
+    "eslint": "^9.26.0",
+    "tsx": "^4.19.4",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.43.1",
+    "postgres": "^3.4.5"
+  }
+}

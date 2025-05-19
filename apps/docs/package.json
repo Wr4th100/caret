@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "@caret/docs",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -11,14 +11,14 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "*",
+    "@caret/ui": "*",
     "next": "^15.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@caret/eslint-config": "*",
+    "@caret/typescript-config": "*",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",

@@ -1,22 +1,32 @@
 {
   "name": "caret",
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "dotenv-cli": "^8.0.0",
+    "prettier": "3.5.3",
+    "prettier-plugin-sort-imports": "1.8.6",
+    "prettier-plugin-tailwindcss": "0.6.11",
+    "turbo": "^2.5.3",
+    "typescript": "5.8.2"
+  },
+  "description": "Cursor - For Documents",
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.8",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "format:check": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "db:generate": "bun -F @caret/db db:generate",
+    "db:migrate": "bun -F @caret/db db:migrate",
+    "db:push": "bun -F @caret/db db:push",
+    "db:studio": "bun -F @caret/db db:studio"
   },
-  "devDependencies": {
-    "prettier": "^3.5.3",
-    "turbo": "^2.5.3",
-    "typescript": "5.8.2"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "bun@1.2.8",
   "workspaces": [
     "apps/*",
     "packages/*"
