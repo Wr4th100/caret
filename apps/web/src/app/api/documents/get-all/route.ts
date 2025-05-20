@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
 
     const documents = await db.query.document.findMany({
       where: (document, { eq }) => eq(document.authorId, session.user.id),
+      orderBy: (document, { desc }) => desc(document.updatedAt),
     });
 
     if (!documents) {

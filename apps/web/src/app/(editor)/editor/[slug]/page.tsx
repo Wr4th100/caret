@@ -2,6 +2,7 @@ import type { Document } from '@/types/db';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 
+import EditorHeader from '@/components/editor/editor-header';
 import PageContent from '@/components/editor/page-content';
 import { auth } from '@/lib/auth';
 
@@ -37,5 +38,10 @@ export default async function EditorPage({ params }: { params: Promise<{ slug: s
     return notFound();
   }
 
-  return <PageContent document={document} />;
+  return (
+    <div className="flex h-screen w-full flex-col">
+      <EditorHeader document={document} />
+      <PageContent document={document} />
+    </div>
+  );
 }

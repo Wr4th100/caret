@@ -31,6 +31,7 @@ import { PageBreakNode } from '@/components/editor/nodes/page-break-node';
 import { PollNode } from '@/components/editor/nodes/poll-node';
 import { editorTheme } from '@/components/editor/themes/editor-theme';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { Document } from '@/types/db';
 import { Plugins } from './plugins';
 
 const editorConfig: InitialConfigType = {
@@ -75,17 +76,22 @@ const editorConfig: InitialConfigType = {
   },
 };
 
+interface EditorProps {
+  editorState?: EditorState;
+  editorSerializedState?: SerializedEditorState;
+  onChange?: (editorState: EditorState) => void;
+  onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  isSaving?: boolean;
+  document?: Document;
+}
+
 export function Editor({
   editorState,
   editorSerializedState,
   onChange,
   onSerializedChange,
-}: {
-  editorState?: EditorState;
-  editorSerializedState?: SerializedEditorState;
-  onChange?: (editorState: EditorState) => void;
-  onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
-}) {
+  isSaving,
+}: EditorProps) {
   return (
     <div className="bg-background w-full overflow-hidden shadow">
       <LexicalComposer
@@ -98,7 +104,11 @@ export function Editor({
         <TooltipProvider>
           <SharedAutocompleteContext>
             <FloatingLinkContext>
-              <Plugins />
+              <Plugins
+                editorSerializedState={editorSerializedState}
+                onSerializedChange={onSerializedChange}
+                isSaving={isSaving}
+              />
 
               <OnChangePlugin
                 ignoreSelectionChange={true}

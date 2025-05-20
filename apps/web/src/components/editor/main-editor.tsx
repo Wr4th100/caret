@@ -1,82 +1,53 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+// import { useQuery } from '@tanstack/react-query';
 import { SerializedEditorState } from 'lexical';
-import debounce from 'lodash.debounce';
 
 import { Editor } from '@/components/blocks/editor-00/editor';
 import { Document } from '@/types/db';
 
-export const initialValue = {
-  root: {
-    children: [
-      {
-        children: [
-          {
-            detail: 0,
-            format: 0,
-            mode: 'normal',
-            style: '',
-            text: 'Hello World 🚀',
-            type: 'text',
-            version: 1,
-          },
-        ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        type: 'paragraph',
-        version: 1,
-      },
-    ],
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    type: 'root',
-    version: 1,
-  },
-} as unknown as SerializedEditorState;
-
-type MainEditorProps = {
+interface MainEditorProps {
   document: Document;
-};
+  editorSerializedState: SerializedEditorState;
+  onSerializedChange: (newState: SerializedEditorState) => void;
+  isSaving: boolean;
+}
 
-export default function MainEditor({ document }: MainEditorProps) {
-  const [editorState, setEditorState] = useState<SerializedEditorState>(
-    document.content
-      ? (JSON.parse(document.content) as unknown as SerializedEditorState)
-      : initialValue,
-  );
-
-  const { mutate: saveDocument } = useMutation({
-    mutationFn: async (newContent: SerializedEditorState) => {
-      await fetch(`/api/documents/${document.slug}/update-content`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: JSON.stringify(newContent) }),
-      });
-    },
-  });
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(
-    debounce((content: SerializedEditorState) => {
-      saveDocument(content);
-    }, 1500),
-    [],
-  );
-
-  const handleChange = (value: SerializedEditorState) => {
-    setEditorState(value);
-    debouncedSave(value);
-  };
+export default function MainEditor({
+  document,
+  editorSerializedState,
+  onSerializedChange,
+  isSaving,
+}: MainEditorProps) {
+  // TODO: Tanstack Query Implementation
+  // const { data: document } = useQuery({
+  //   queryKey: ['document', documentPrefetched.slug],
+  //   queryFn: async () => {
+  //     const response = await fetch(`/api/documents/${documentPrefetched.slug}`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     const data = await response.json();
+  //     return data;
+  //   },
+  //   initialData: {
+  //     document: documentPrefetched,
+  //   },
+  // });
 
   return (
     <div className="flex w-full">
-      <Editor editorSerializedState={editorState} onSerializedChange={handleChange} />
+      <Editor
+        document={document}
+        editorSerializedState={editorSerializedState}
+        onSerializedChange={onSerializedChange}
+        isSaving={isSaving}
+      />
     </div>
   );
 }

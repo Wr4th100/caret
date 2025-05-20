@@ -18,6 +18,8 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
+import { SerializedEditorState } from 'lexical';
+import { Loader2 } from 'lucide-react';
 
 import { ContentEditable } from '@/components/editor/editor-ui/content-editable';
 import { ActionsPlugin } from '@/components/editor/plugins/actions/actions-plugin';
@@ -111,7 +113,15 @@ import { TABLE } from '@/components/editor/transformers/markdown-table-transform
 import { TWEET } from '@/components/editor/transformers/markdown-tweet-transformer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export function Plugins() {
+export function Plugins({
+  // editorSerializedState,
+  // onSerializedChange,
+  isSaving,
+}: {
+  editorSerializedState?: SerializedEditorState;
+  onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  isSaving?: boolean;
+}) {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
@@ -263,7 +273,15 @@ export function Plugins() {
       {/* actions plugins */}
       <ActionsPlugin>
         <div className="clear-both flex w-full items-center justify-between gap-2 overflow-auto border-t p-1">
-          <div className="flex flex-1 justify-start">{/* left side action buttons */}</div>
+          <div className="flex flex-1 justify-start">
+            {/* left side action buttons */}
+            {isSaving && (
+              <div className="ml-2 flex items-center gap-1">
+                <Loader2 className="animate-spin" size={14} />
+                <span className="text-muted-foreground text-xs">Saving...</span>
+              </div>
+            )}
+          </div>
           <div>
             {/* center action buttons */}
             <CounterCharacterPlugin charset="UTF-16" />

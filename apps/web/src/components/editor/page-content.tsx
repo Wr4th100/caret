@@ -1,64 +1,100 @@
+'use client';
+
 import type { Document } from '@/types/db';
+import { useCallback, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { SerializedEditorState } from 'lexical';
+import debounce from 'lodash.debounce';
 
+import AIPanel from '@/components/editor/ai-panel';
 import MainEditor from '@/components/editor/main-editor';
-import Logo from '@/components/logo';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../ui/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
-type PageContentProps = {
+interface PageContentProps {
   document: Document;
-};
+}
+
+export const initialValue = {
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: 'Hello World 🚀',
+            type: 'text',
+            version: 1,
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'paragraph',
+        version: 1,
+      },
+    ],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    type: 'root',
+    version: 1,
+  },
+} as unknown as SerializedEditorState;
 
 const PageContent = ({ document }: PageContentProps) => {
+  const [editorState, setEditorState] = useState<SerializedEditorState>(
+    document.content
+      ? (JSON.parse(document.content) as unknown as SerializedEditorState)
+      : initialValue,
+  );
+
+  const { mutate: saveDocument, isPending: isSaving } = useMutation({
+    mutationFn: async (newContent: SerializedEditorState) => {
+      await fetch(`/api/documents/${document.slug}/update-content`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: JSON.stringify(newContent) }),
+      });
+    },
+  });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSave = useCallback(
+    debounce((content: SerializedEditorState) => {
+      saveDocument(content);
+    }, 1500),
+    [],
+  );
+
+  const handleChange = (value: SerializedEditorState) => {
+    setEditorState(value);
+    debouncedSave(value);
+  };
+
   return (
-    <div className="flex h-screen w-full flex-col">
-      <div className="flex h-16 w-full items-center justify-center border-b">
-        <div className="flex w-full items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/">
-                    <Logo />
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{document.name}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-          <div></div>
+    <ResizablePanelGroup direction="horizontal">
+      <ResizablePanel defaultSize={75}>
+        <div className="flex h-full w-full">
+          <MainEditor
+            editorSerializedState={editorState}
+            onSerializedChange={handleChange}
+            isSaving={isSaving}
+            document={document}
+          />
         </div>
-      </div>
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={75}>
-          <div className="flex h-full w-full">
-            <MainEditor document={document} />
-          </div>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={25}>
-          <div>
-            <div className="flex flex-col gap-2 p-2">
-              <div className="">
-                <p className="text-primary font-medium tracking-tighter">Caret AI</p>
-              </div>
-              <Separator />
-            </div>
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </div>
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={25}>
+        <div>
+          <AIPanel />
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 };
 
