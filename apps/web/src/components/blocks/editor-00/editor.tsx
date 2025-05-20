@@ -12,9 +12,11 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { EditorState, ParagraphNode, SerializedEditorState, TextNode } from 'lexical';
 
+import { AiTabContext } from '@/components/editor/context/ai-tab-context';
 import { FloatingLinkContext } from '@/components/editor/context/floating-link-context';
-import { SharedAutocompleteContext } from '@/components/editor/context/shared-autocomplete-context';
-import { AutocompleteNode } from '@/components/editor/nodes/autocomplete-node';
+import { AITabNode } from '@/components/editor/nodes/ai-tab-node';
+// import { SharedAutocompleteContext } from '@/components/editor/context/shared-autocomplete-context';
+// import { AutocompleteNode } from '@/components/editor/nodes/autocomplete-node';
 import { CollapsibleContainerNode } from '@/components/editor/nodes/collapsible-container-node';
 import { CollapsibleContentNode } from '@/components/editor/nodes/collapsible-content-node';
 import { CollapsibleTitleNode } from '@/components/editor/nodes/collapsible-title-node';
@@ -44,7 +46,7 @@ const editorConfig: InitialConfigType = {
     QuoteNode,
     ListNode,
     ListItemNode,
-    AutocompleteNode,
+    // AutocompleteNode,
     LinkNode,
     AutoLinkNode,
     FigmaNode,
@@ -70,6 +72,7 @@ const editorConfig: InitialConfigType = {
     AutoLinkNode,
     PageBreakNode,
     PollNode,
+    AITabNode,
   ],
   onError: (error: Error) => {
     console.error(error);
@@ -102,7 +105,8 @@ export function Editor({
         }}
       >
         <TooltipProvider>
-          <SharedAutocompleteContext>
+          <AiTabContext>
+            {/* <SharedAutocompleteContext> */}
             <FloatingLinkContext>
               <Plugins
                 editorSerializedState={editorSerializedState}
@@ -118,7 +122,8 @@ export function Editor({
                 }}
               />
             </FloatingLinkContext>
-          </SharedAutocompleteContext>
+            {/* </SharedAutocompleteContext> */}
+          </AiTabContext>
         </TooltipProvider>
       </LexicalComposer>
     </div>

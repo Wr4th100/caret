@@ -29,8 +29,9 @@ import { ImportExportPlugin } from '@/components/editor/plugins/actions/import-e
 import { MarkdownTogglePlugin } from '@/components/editor/plugins/actions/markdown-toggle-plugin';
 import { SpeechToTextPlugin } from '@/components/editor/plugins/actions/speech-to-text-plugin';
 import { TreeViewPlugin } from '@/components/editor/plugins/actions/tree-view-plugin';
+import { AITabPlugin } from '@/components/editor/plugins/ai-tab-plugin';
 import { AutoLinkPlugin } from '@/components/editor/plugins/auto-link-plugin';
-import { AutocompletePlugin } from '@/components/editor/plugins/autocomplete-plugin';
+// import { AutocompletePlugin } from '@/components/editor/plugins/autocomplete-plugin';
 import { CodeHighlightPlugin } from '@/components/editor/plugins/code-highlight-plugin';
 import { CollapsiblePlugin } from '@/components/editor/plugins/collapsible-plugin';
 import { ComponentPickerMenuPlugin } from '@/components/editor/plugins/component-picker-menu-plugin';
@@ -195,7 +196,8 @@ export function Plugins({
         <LinkPlugin />
         <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} />
         <DragDropPastePlugin />
-        <AutocompletePlugin />
+        {/* <AutocompletePlugin /> */}
+        <AITabPlugin />
         <AutoFocusPlugin />
         <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
         <CodeHighlightPlugin />

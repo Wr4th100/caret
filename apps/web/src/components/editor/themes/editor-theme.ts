@@ -109,6 +109,7 @@ export const editorTheme: EditorThemeClasses = {
   layoutItem: 'border border-dashed px-4 py-2',
   layoutContainer: 'grid gap-2.5 my-2.5 mx-0',
   autocomplete: 'text-muted-foreground',
+  aiTab: 'text-muted-foreground',
   blockCursor: '',
   embedBlock: {
     base: 'user-select-none',
