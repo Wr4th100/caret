@@ -1,6 +1,10 @@
-const Logo = () => {
+interface LogoProps {
+  className?: string;
+}
+
+const Logo = ({ className }: LogoProps) => {
   return (
-    <div>
+    <div className={className}>
       <p className="text-primary text-2xl font-medium tracking-tighter">caret.</p>
     </div>
   );
