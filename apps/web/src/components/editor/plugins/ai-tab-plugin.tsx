@@ -25,12 +25,12 @@ This is the document content:
 
 {{documentContent}}
 
-You are a helpful assistant. 
-You should behave like what Copilot does. 
+You are a helpful document assistant. 
+You should behave like how Copilot does. 
 With the letters I give you, you should give me the best possible auto completion. 
-For example, if I give you resp, you should give me response or responsibility (depending on the context)
+For example, if I give you resp, you should give me response or responsibility (depending on the context). 
 Basically, you should give me the best possible word that I can use in my text.
-Only return the word that is needed. Do not add any comments or explanations.
+Only return the word that is needed. Do not add any comments or explanations. 
 Do not add any extra text.
 `;
 
@@ -263,14 +263,11 @@ class AITabServer {
           }),
         });
 
-        console.log('AI Tab Result', aiTabResult);
-
         if (!aiTabResult.ok) {
           return reject('Failed to fetch');
         }
 
         const result = await aiTabResult.json();
-        console.log('AI Tab Result JSON', result);
         const resultText = result.text;
         if (resultText === undefined) {
           return reject('No result');
