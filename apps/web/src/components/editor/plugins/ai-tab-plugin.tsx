@@ -1,6 +1,5 @@
 import { JSX, useCallback, useEffect } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $isAtNodeEnd } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
 import {
   $createTextNode,
@@ -13,6 +12,7 @@ import {
   COMMAND_PRIORITY_LOW,
   KEY_ARROW_RIGHT_COMMAND,
   KEY_TAB_COMMAND,
+  LexicalNode,
   NodeKey,
 } from 'lexical';
 
@@ -25,13 +25,11 @@ This is the document content:
 
 {{documentContent}}
 
-You are a helpful document assistant. 
-You should behave like how Copilot does. 
-With the letters I give you, you should give me the best possible auto completion. 
-For example, if I give you resp, you should give me response or responsibility (depending on the context). 
-Basically, you should give me the best possible word that I can use in my text.
-Only return the word that is needed. Do not add any comments or explanations. 
-Do not add any extra text.
+You are a helpful document assistant like GitHub Copilot.
+When given a partial word or sentence, provide a relevant continuation.
+Respond with the most likely continuation of the user's current text (word or sentence).
+Add space at beginning if needed.
+Do not explain. Only provide the continuation.
 `;
 
 type SearchPromise = {
@@ -51,22 +49,29 @@ function $search(selection: null | BaseSelection): [boolean, string] {
     return [false, ''];
   }
   const node = selection.getNodes()[0];
-  const anchor = selection.anchor;
-  // Check siblings?
-  if (!$isTextNode(node) || !node.isSimpleText() || !$isAtNodeEnd(anchor)) {
+  if (!node) {
     return [false, ''];
   }
-  const word = [];
   const text = node.getTextContent();
-  let i = node.getTextContentSize();
-  let c;
-  while (i-- && i >= 0 && (c = text[i]) !== ' ') {
-    word.push(c);
+  const offset = selection.anchor.offset;
+  const word = [];
+  let i = offset - 1;
+  let characterMet = false;
+  while (i >= 0) {
+    if (characterMet && text[i] === ' ') {
+      break;
+    }
+
+    word.unshift(text[i]);
+    i--;
+    if (text[i] !== ' ') {
+      characterMet = true;
+    }
   }
   if (word.length === 0) {
     return [false, ''];
   }
-  return [true, word.reverse().join('')];
+  return [true, word.join('')];
 }
 
 function useQuery(): (searchText: string, documentContent: string) => SearchPromise {
@@ -77,6 +82,55 @@ function useQuery(): (searchText: string, documentContent: string) => SearchProm
     console.timeEnd('query');
     return response;
   }, []);
+}
+
+export function getFullContext(
+  beforeLimit = 500,
+  afterLimit = 500,
+): {
+  contextBefore: string;
+  currentLine: string;
+  contextAfter: string;
+} {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    return { contextBefore: '', currentLine: '', contextAfter: '' };
+  }
+
+  const anchorNode = selection.anchor.getNode();
+  const currentParagraph = anchorNode.getTopLevelElementOrThrow();
+
+  let contextBefore = '';
+  let contextAfter = '';
+  const currentLine = currentParagraph.getTextContent();
+
+  // Traverse backwards
+  let prevNode: LexicalNode | null = currentParagraph.getPreviousSibling();
+  while (prevNode && contextBefore.length < beforeLimit) {
+    if ($isTextNode(prevNode)) {
+      contextBefore = prevNode.getTextContent() + '\n' + contextBefore;
+    } else {
+      contextBefore = prevNode.getTextContent() + '\n' + contextBefore;
+    }
+    prevNode = prevNode.getPreviousSibling();
+  }
+
+  // Traverse forwards
+  let nextNode: LexicalNode | null = currentParagraph.getNextSibling();
+  while (nextNode && contextAfter.length < afterLimit) {
+    if ($isTextNode(nextNode)) {
+      contextAfter += '\n' + nextNode.getTextContent();
+    } else {
+      contextAfter += '\n' + nextNode.getTextContent();
+    }
+    nextNode = nextNode.getNextSibling();
+  }
+
+  return {
+    contextBefore: contextBefore.slice(-beforeLimit),
+    currentLine,
+    contextAfter: contextAfter.slice(0, afterLimit),
+  };
 }
 
 export function AITabPlugin(): JSX.Element | null {
@@ -134,7 +188,7 @@ export function AITabPlugin(): JSX.Element | null {
 
       debounceTimer = setTimeout(() => {
         editor.update(() => {
-          const content = JSON.stringify(editor.getEditorState());
+          const { contextBefore, currentLine, contextAfter } = getFullContext();
           const selection = $getSelection();
           const [hasMatch, match] = $search(selection);
           if (!hasMatch) {
@@ -145,7 +199,10 @@ export function AITabPlugin(): JSX.Element | null {
             return;
           }
           $clearSuggestion();
-          searchPromise = query(match, content);
+          searchPromise = query(
+            match,
+            `contextBefore: ${contextBefore}\nCurrentLine: ${currentLine}\nContextAfter: ${contextAfter}`,
+          );
           searchPromise.promise
             .then((newSuggestion) => {
               if (searchPromise !== null) {
@@ -239,10 +296,12 @@ class AITabServer {
           // TODO cache result
           return reject('Dismissed');
         }
+
         const searchTextLength = searchText.length;
-        if (searchText === '' || searchTextLength < 4) {
-          return resolve(null);
-        }
+
+        // if (searchText === '' || searchTextLength < 4) {
+        //   return resolve(null);
+        // }
 
         if (searchTextLength > 100) {
           return reject('Too long');
@@ -268,14 +327,13 @@ class AITabServer {
         }
 
         const result = await aiTabResult.json();
-        const resultText = result.text;
+        const resultText = result.text as string;
         if (resultText === undefined) {
           return reject('No result');
         }
-        const finalChunk = (resultText as string).substring(searchTextLength);
-        suggestionCache.set(searchText, finalChunk);
-        if (finalChunk.length > 0) {
-          return resolve(finalChunk);
+        suggestionCache.set(searchText, resultText);
+        if (resultText.length > 0) {
+          return resolve(resultText);
         }
         return reject('No result');
       }, this.LATENCY);

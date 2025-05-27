@@ -94,6 +94,7 @@ export function Editor({
   onChange,
   onSerializedChange,
   isSaving,
+  document,
 }: EditorProps) {
   return (
     <div className="bg-background w-full overflow-hidden shadow">
@@ -112,6 +113,7 @@ export function Editor({
                 editorSerializedState={editorSerializedState}
                 onSerializedChange={onSerializedChange}
                 isSaving={isSaving}
+                document={document}
               />
 
               <OnChangePlugin

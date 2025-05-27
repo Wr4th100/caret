@@ -8,6 +8,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Document } from '@/types/db';
+import { ThemeToggle } from '../ui/theme';
 
 interface EditorHeaderProps {
   document: Document;
@@ -15,13 +16,13 @@ interface EditorHeaderProps {
 
 const EditorHeader = ({ document }: EditorHeaderProps) => {
   return (
-    <div className="flex h-16 w-full items-center justify-center border-b">
+    <div className="flex h-16 w-full items-center justify-center border-b py-1">
       <div className="flex w-full items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/">
+                <BreadcrumbLink href="/dashboard">
                   <Logo />
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -32,7 +33,9 @@ const EditorHeader = ({ document }: EditorHeaderProps) => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div></div>
+        <div>
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

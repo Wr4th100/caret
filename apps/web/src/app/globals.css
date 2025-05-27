@@ -148,3 +148,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+.ai-fade-in {
+  animation: fadeInSlideUp 0.6s ease-out;
+}
+
+@keyframes fadeInSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-highlight-fade {
+  animation: highlightFadeOut 4s ease forwards;
+}
+
+@keyframes highlightFadeOut {
+  0% {
+    background-color: #fff6b0; /* Light yellow highlight */
+  }
+  100% {
+    background-color: transparent;
+  }
+}

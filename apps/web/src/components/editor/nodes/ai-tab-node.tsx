@@ -12,6 +12,7 @@ import { DecoratorNode } from 'lexical';
 import { motion } from 'motion/react';
 
 import { uuid as UUID } from '@/components/editor/plugins/ai-tab-plugin';
+import { cn } from '@/lib/utils';
 import { useAITabContext } from '../context/ai-tab-context';
 
 declare global {
@@ -25,6 +26,7 @@ declare global {
 export type SerializedAITabNode = Spread<
   {
     uuid: string;
+    tags?: string[];
   },
   SerializedLexicalNode
 >;
@@ -53,11 +55,16 @@ export class AITabNode extends DecoratorNode<JSX.Element | null> {
     return node;
   }
 
+  getTags(): Array<string> {
+    return ['ai-edited'];
+  }
+
   exportJSON(): SerializedAITabNode {
     return {
       ...super.exportJSON(),
       type: 'aiTab',
       uuid: this.__uuid,
+      tags: this.getTags(),
       version: 1,
     };
   }
@@ -104,7 +111,7 @@ function AITabComponent({ className }: { className: EditorThemeClassName }): JSX
       : window.innerWidth <= 800 && window.innerHeight <= 600;
   return (
     <motion.span
-      className={className}
+      className={cn(className)}
       spellCheck="false"
       initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}

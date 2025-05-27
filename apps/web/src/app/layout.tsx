@@ -4,6 +4,8 @@ import { Geist_Mono, Poppins } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 
 import './globals.css';
+import 'highlight.js/styles/nnfx-dark.css'; // or any other highlight.js theme
+import 'katex/dist/katex.min.css';
 
 import { PostHogProvider } from '@/components/providers/posthog-provider';
 import { ThemeProvider } from '@/components/ui/theme';

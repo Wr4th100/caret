@@ -9,8 +9,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   try {
     const session = await getActiveSession();
 
-    console.log('session in route', session);
-
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -6,9 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { SerializedEditorState } from 'lexical';
 import debounce from 'lodash.debounce';
 
-import AIPanel from '@/components/editor/ai-panel';
 import MainEditor from '@/components/editor/main-editor';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
 interface PageContentProps {
   document: Document;
@@ -77,24 +75,14 @@ const PageContent = ({ document }: PageContentProps) => {
   };
 
   return (
-    <ResizablePanelGroup direction="horizontal">
-      <ResizablePanel defaultSize={75}>
-        <div className="flex h-full w-full">
-          <MainEditor
-            editorSerializedState={editorState}
-            onSerializedChange={handleChange}
-            isSaving={isSaving}
-            document={document}
-          />
-        </div>
-      </ResizablePanel>
-      <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={25}>
-        <div>
-          <AIPanel />
-        </div>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+    <div className="flex h-full w-full">
+      <MainEditor
+        editorSerializedState={editorState}
+        onSerializedChange={handleChange}
+        isSaving={isSaving}
+        document={document}
+      />
+    </div>
   );
 };
 
