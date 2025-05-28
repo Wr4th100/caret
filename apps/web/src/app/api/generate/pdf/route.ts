@@ -7,13 +7,13 @@ import { getActiveSession } from '@/actions/utils';
 /**
  * Chromium for Puppeteer
  */
-export const CHROMIUM_EXECUTABLE_PATH =
+const CHROMIUM_EXECUTABLE_PATH =
   'https://github.com/Sparticuz/chromium/releases/download/v135.0.0-next.3/chromium-v135.0.0-next.3-pack.x64.tarhttps://github.com/Sparticuz/chromium/releases/download/v135.0.0-next.3/chromium-v135.0.0-next.3-pack.x64.tar';
 
 /**
  * Tailwind
  */
-export const TAILWIND_CDN = 'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4';
+const TAILWIND_CDN = 'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4';
 
 export async function POST(req: NextRequest) {
   let browser;
