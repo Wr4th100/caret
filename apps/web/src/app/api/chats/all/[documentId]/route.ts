@@ -5,9 +5,20 @@ import { db } from '@caret/db/client';
 
 import { getActiveSession } from '@/actions/utils';
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ documentId: string }> },
+) {
   try {
     console.log('Fetching all chats for the user', req);
+    const documentId = Number((await params).documentId);
+
+    if (!documentId) {
+      return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
+    }
+
+    console.log('Document ID:', documentId);
+
     const session = await getActiveSession();
 
     if (!session) {
@@ -15,7 +26,8 @@ export async function GET(req: NextRequest) {
     }
 
     const chatsOfUser = await db.query.chat.findMany({
-      where: (chat, { eq }) => eq(chat.userId, session.user.id),
+      where: (chat, { eq, and }) =>
+        and(eq(chat.userId, session.user.id), eq(chat.documentId, documentId)),
       limit: 5,
       orderBy: (chat, { desc }) => desc(chat.createdAt),
     });

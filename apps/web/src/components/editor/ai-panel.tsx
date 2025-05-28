@@ -79,7 +79,7 @@ const AIPanel = ({ document }: { document: Document }) => {
   } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
-      fetch('/api/chats/all').then((res) => {
+      fetch(`/api/chats/all/${document.id}`).then((res) => {
         console.log('High');
         return res.json() as Promise<{ chats: Chat[] }>;
       }),
