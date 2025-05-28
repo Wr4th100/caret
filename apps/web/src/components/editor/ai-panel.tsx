@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronDownIcon, Paperclip, Plus, Send } from 'lucide-react';
+import { ChevronDownIcon, Ellipsis, Paperclip, Plus, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
@@ -84,8 +84,6 @@ const AIPanel = ({ document }: { document: Document }) => {
         return res.json() as Promise<{ chats: Chat[] }>;
       }),
   });
-
-  console.log('All chats data:', allChatsData);
 
   const handleSubmit = (e: React.FormEvent, currentChat: Chat) => {
     e.preventDefault();
@@ -354,6 +352,9 @@ const AIPanel = ({ document }: { document: Document }) => {
               >
                 {message.role === 'user' ? 'You' : 'AI'}
               </Badge>
+              {isStreaming && message.id === messages[messages.length - 1]?.id && (
+                <Ellipsis className="animate-pulse" />
+              )}
               <div className="prose prose-sm max-w-none text-sm whitespace-pre-wrap">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
