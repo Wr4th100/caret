@@ -1,9 +1,9 @@
 import { headers } from 'next/headers';
 import Link from 'next/link';
 
+import GoogleSignIn from '@/components/auth/google-sign-in';
+import { Button } from '@/components/ui/button';
 import { auth } from '@/lib/auth';
-import GoogleSignIn from '../auth/google-sign-in';
-import { Button } from '../ui/button';
 
 const HeroSection = async () => {
   const session = await auth.api.getSession({

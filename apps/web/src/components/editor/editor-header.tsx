@@ -7,8 +7,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { ThemeToggle } from '@/components/ui/theme';
 import { Document } from '@/types/db';
-import { ThemeToggle } from '../ui/theme';
 
 interface EditorHeaderProps {
   document: Document;

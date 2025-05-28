@@ -29,12 +29,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Textarea } from '@/components/ui/textarea';
 import { authClient } from '@/lib/auth-client';
 import { applyAIInstruction } from '@/lib/editor-utils';
 import { cn } from '@/lib/utils';
 import { AIInstruction } from '@/types/api';
 import { Chat, Document } from '@/types/db';
-import { Textarea } from '../ui/textarea';
 
 interface Message {
   id: string;
