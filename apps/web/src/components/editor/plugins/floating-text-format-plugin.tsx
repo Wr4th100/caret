@@ -26,21 +26,29 @@ import {
 import {
   BoldIcon,
   CodeIcon,
+  Cross,
   ItalicIcon,
   LinkIcon,
+  ShieldCheck,
+  ShieldQuestion,
+  ShieldX,
   StrikethroughIcon,
   SubscriptIcon,
   SuperscriptIcon,
   UnderlineIcon,
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { toast } from 'sonner';
 
 import { useFloatingLinkContext } from '@/components/editor/context/floating-link-context';
+import { factCheckAction } from '@/components/editor/plugins/toolbar/fact-check-toolbar-plugin';
 import { getDOMRangeRect } from '@/components/editor/utils/get-dom-range-rect';
 import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
 import { setFloatingElemPosition } from '@/components/editor/utils/set-floating-elem-position';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { removeCitationsFromText } from '@/lib/utils';
 
 function FloatingTextFormat({
   editor,
@@ -78,6 +86,63 @@ function FloatingTextFormat({
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
   }, [editor, isLink, setIsLinkEditMode]);
+
+  const factCheck = (editor: LexicalEditor) => {
+    editor.read(async () => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection) && selection.getTextContent() !== '') {
+        console.log('Fact checking selection:', selection.getTextContent());
+        const selectedText = selection.getTextContent().trim();
+
+        toast.promise(factCheckAction(selectedText), {
+          loading: 'Fact checking...',
+          success: (result: {
+            verdict: string;
+            text: string;
+            sources: { sourceType: string; url: string }[];
+          }) => {
+            console.log(result);
+            return (
+              <div className="flex items-center gap-2">
+                <div>
+                  {result.verdict.toLowerCase().includes('true') ? (
+                    <ShieldCheck className="h-6 w-6 text-green-500" />
+                  ) : result.verdict.toLowerCase().includes('false') ? (
+                    <ShieldX className="h-6 w-6 text-red-500" />
+                  ) : (
+                    <ShieldQuestion className="h-6 w-6 text-yellow-500" />
+                  )}
+                </div>
+                <div>
+                  <div>
+                    <div>
+                      <p className="text-muted-foreground text-xs font-semibold">
+                        Fact check result
+                      </p>
+                      <p>
+                        <strong>{result.verdict.toUpperCase()}</strong>
+                      </p>
+                    </div>
+                    <p className="text-muted-foreground text-xs">
+                      {removeCitationsFromText(result.text)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          },
+          error: (error: Error) => {
+            return (
+              <div className="flex items-center gap-2">
+                <Cross className="h-4 w-4 text-red-500" />
+                <span>Error: {error.message}</span>
+              </div>
+            );
+          },
+        });
+      }
+    });
+  };
 
   function mouseMoveListener(e: MouseEvent) {
     if (popupCharStylesEditorRef?.current && (e.buttons === 1 || e.buttons === 3)) {
@@ -282,7 +347,18 @@ function FloatingTextFormat({
             >
               <SuperscriptIcon className="h-4 w-4" />
             </ToggleGroupItem>
+            <Separator orientation="vertical" />
           </ToggleGroup>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => factCheck(editor)}
+            aria-label="Fact check selected text"
+            className="bg-linear-to-t from-sky-500 to-indigo-500"
+          >
+            <ShieldQuestion className="h-4 w-4" />
+            <span>Fact Check</span>
+          </Button>
         </>
       )}
     </div>

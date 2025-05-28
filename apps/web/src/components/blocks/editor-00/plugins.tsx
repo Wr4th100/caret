@@ -98,6 +98,7 @@ import { ClearFormattingToolbarPlugin } from '@/components/editor/plugins/toolba
 import { CodeActionMenuPlugin } from '@/components/editor/plugins/toolbar/code-action-menu-plugin';
 import { CodeLanguageToolbarPlugin } from '@/components/editor/plugins/toolbar/code-language-toolbar-plugin';
 import { ElementFormatToolbarPlugin } from '@/components/editor/plugins/toolbar/element-format-toolbar-plugin';
+import { FactCheckToolbarPlugin } from '@/components/editor/plugins/toolbar/fact-check-toolbar-plugin';
 import { FontBackgroundToolbarPlugin } from '@/components/editor/plugins/toolbar/font-background-toolbar-plugin';
 import { FontColorToolbarPlugin } from '@/components/editor/plugins/toolbar/font-color-toolbar-plugin';
 import { FontFamilyToolbarPlugin } from '@/components/editor/plugins/toolbar/font-family-toolbar-plugin';
@@ -177,6 +178,9 @@ export function Plugins({
               <InsertPoll />
               <InsertTable />
             </BlockInsertPlugin>
+            <div>
+              <FactCheckToolbarPlugin />
+            </div>
           </div>
         )}
       </ToolbarPlugin>
