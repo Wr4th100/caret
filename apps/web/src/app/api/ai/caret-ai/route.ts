@@ -5,6 +5,7 @@ import { eq } from '@caret/db';
 import { db } from '@caret/db/client';
 import { chat, message } from '@caret/db/schema';
 
+import { getActiveSession } from '@/actions/utils';
 import { Chat } from '@/types/db';
 
 export const maxDuration = 30;
@@ -32,6 +33,12 @@ export async function POST(req: Request) {
     documentId,
     editorState,
   });
+
+  const session = await getActiveSession();
+
+  if (!session || !session.user) {
+    throw new Error('User not authenticated');
+  }
 
   const prompt = `
     You are an AI writing assistant integrated into a structured document editor like Lexical. 

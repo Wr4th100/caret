@@ -2,7 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
 
+import { getActiveSession } from '@/actions/utils';
+
 export async function POST(req: NextRequest) {
+  const session = await getActiveSession();
+  if (!session || !session.user) {
+    return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
+  }
+
   const { text } = await req.json();
 
   const apiKey = process.env.PERPLEXITY_API_KEY;

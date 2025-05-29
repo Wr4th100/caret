@@ -3,6 +3,7 @@
 import { db } from '@caret/db/client';
 import { message } from '@caret/db/schema';
 
+import { getActiveSession } from '@/actions/utils';
 import { Chat } from '@/types/db';
 
 export async function createMessageAction({
@@ -12,6 +13,12 @@ export async function createMessageAction({
   currentChat: Chat;
   content: string;
 }) {
+  const session = await getActiveSession();
+
+  if (!session || !session.user) {
+    throw new Error('User not authenticated');
+  }
+
   try {
     const [msg] = await db
       .insert(message)
@@ -24,9 +31,6 @@ export async function createMessageAction({
     if (!msg) {
       throw new Error('Message creation failed');
     }
-    console.log('================= MESSAGE CREATED ================');
-    console.log(msg);
-    console.log('==================================================');
     return msg;
   } catch (error) {
     console.error('Error creating message:', error);

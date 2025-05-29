@@ -5,6 +5,8 @@ import slugify from 'slugify';
 import { db } from '@caret/db/client';
 import { document } from '@caret/db/schema';
 
+import { getActiveSession } from '@/actions/utils';
+
 export async function createDocumentAction({
   name,
   description,
@@ -16,6 +18,12 @@ export async function createDocumentAction({
   type: string;
   authorId: string;
 }) {
+  const session = await getActiveSession();
+
+  if (!session || !session.user) {
+    throw new Error('User not authenticated');
+  }
+
   try {
     const slug =
       slugify(name, {

@@ -5,7 +5,7 @@ import { $generateHtmlFromNodes } from '@lexical/html';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { DownloadIcon, FileTextIcon, UploadIcon } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 export function ImportExportPlugin() {
   const [editor] = useLexicalComposerContext();
@@ -67,55 +68,12 @@ export function ImportExportPlugin() {
         </TooltipTrigger>
         <TooltipContent>Import Content</TooltipContent>
       </Tooltip>
-
-      {/* <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant={'ghost'}
-            onClick={() =>
-              exportFile(editor, {
-                fileName: `Playground ${new Date().toISOString()}`,
-                source: 'Playground',
-              })
-            }
-            title="Export"
-            aria-label="Export editor state to JSON"
-            size={'sm'}
-            className="p-2"
-          >
-            <DownloadIcon className="size-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Export Content</TooltipContent>
-      </Tooltip>
-
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            onClick={exportAsPDF}
-            title="Export PDF"
-            aria-label="Export editor as PDF"
-            size="sm"
-            className="p-2"
-          >
-            <FileTextIcon className="size-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Export as PDF</TooltipContent>
-      </Tooltip> */}
-
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button
-            variant={'ghost'}
-            title="Export"
-            aria-label="Export editor state"
-            size={'sm'}
-            className="p-2"
-          >
-            <DownloadIcon className="size-4" />
-          </Button>
+        <DropdownMenuTrigger
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'p-2')}
+          aria-label="Export editor state"
+        >
+          <DownloadIcon className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>Export</DropdownMenuLabel>

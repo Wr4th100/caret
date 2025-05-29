@@ -3,6 +3,8 @@
 import { db } from '@caret/db/client';
 import { chat } from '@caret/db/schema';
 
+import { getActiveSession } from '@/actions/utils';
+
 export async function createChatAction({
   title,
   userId,
@@ -12,6 +14,12 @@ export async function createChatAction({
   userId: string;
   documentId: number;
 }) {
+  const session = await getActiveSession();
+
+  if (!session || !session.user) {
+    throw new Error('User not authenticated');
+  }
+
   try {
     const newChat = await db
       .insert(chat)
