@@ -11,7 +11,7 @@ const HeroSection = async () => {
   });
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center">
+    <div className="flex h-screen w-full flex-col items-center justify-center max-w-6xl">
       <p className="text-center text-6xl font-bold tracking-tighter">Effortlessly Do Documents.</p>
       <p className="mt-4 text-center text-2xl">
         A Cursor-like editor for Documents. Powered by Perplexity AI.

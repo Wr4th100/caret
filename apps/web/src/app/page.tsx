@@ -8,10 +8,12 @@ export default function Home() {
     <main className="relative flex max-h-screen flex-1 flex-col">
       <Particles className="absolute h-screen w-full" quantity={300} />
       <NavBar />
-      <div>
+      <div className="flex items-center justify-center">
         <HeroSection />
       </div>
-      <Footer />
+      <div className="flex items-center justify-center">
+        <Footer />
+      </div>
     </main>
   );
 }
