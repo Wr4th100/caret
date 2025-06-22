@@ -1,22 +1,24 @@
+import { NextResponse } from 'next/server';
+
 import { eq } from '@caret/db';
 import { db } from '@caret/db/client';
 import { user } from '@caret/db/schema';
 
 import { encrypt } from '@/lib/api-key';
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
-      return new Response(JSON.stringify({ error: 'Missing user ID.' }), { status: 400 });
+      return NextResponse.json({ error: 'User ID is required.' }, { status: 400 });
     }
 
     const body = await request.json();
     const { apiKey } = body;
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API key is required.' }), { status: 400 });
+      return NextResponse.json({ error: 'API key is required.' }, { status: 400 });
     }
 
     const encryptedApiKey = encrypt(apiKey);
@@ -30,15 +32,12 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       .returning();
 
     if (!updatedUser) {
-      return new Response(JSON.stringify({ error: 'User not found.' }), { status: 404 });
+      return NextResponse.json({ error: 'User not found.' }, { status: 404 });
     }
 
-    return new Response(JSON.stringify(updatedUser), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return NextResponse.json(JSON.stringify(updatedUser));
   } catch (error) {
     console.error('Error updating API key:', error);
-    return new Response(JSON.stringify({ error: 'Failed to update API key' }), { status: 500 });
+    return NextResponse.json({ error: 'Failed to update API key.' }, { status: 500 });
   }
 }
