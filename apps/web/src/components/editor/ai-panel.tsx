@@ -304,27 +304,29 @@ const AIPanel = ({ document }: { document: Document }) => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-1"
-          onClick={async () => {
-            if (!session) {
-              throw new Error('Session not found');
-            }
-            const newChat = await createChatAction({
-              title: 'New Chat',
-              userId: session.user.id,
-              documentId: document.id,
-            });
-            console.log('New chat created:', newChat);
-            setChat(newChat);
-            setMessages([]);
-          }}
-        >
-          <Plus />
-          <span className="ml-1">New Chat</span>
-        </Button>
+        <div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-1"
+            onClick={async () => {
+              if (!session) {
+                throw new Error('Session not found');
+              }
+              const newChat = await createChatAction({
+                title: 'New Chat',
+                userId: session.user.id,
+                documentId: document.id,
+              });
+              console.log('New chat created:', newChat);
+              setChat(newChat);
+              setMessages([]);
+            }}
+          >
+            <Plus />
+            <span className="ml-1">New Chat</span>
+          </Button>
+        </div>
       </div>
       <div className="h-[840px] space-y-4 overflow-y-scroll px-2 pt-0 pb-20">
         {messages.length !== 0 ? (

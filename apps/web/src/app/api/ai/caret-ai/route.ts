@@ -1,4 +1,4 @@
-import { perplexity } from '@ai-sdk/perplexity';
+import { createPerplexity } from '@ai-sdk/perplexity';
 import { createDataStreamResponse, streamText } from 'ai';
 
 import { eq } from '@caret/db';
@@ -6,7 +6,9 @@ import { db } from '@caret/db/client';
 import { chat, message } from '@caret/db/schema';
 
 import { getActiveSession } from '@/actions/utils';
+import { incrementTrialUsage } from '@/lib/trial-limit';
 import { Chat } from '@/types/db';
+import { getUserApiKey } from '../utils';
 
 export const maxDuration = 30;
 
@@ -39,6 +41,27 @@ export async function POST(req: Request) {
   if (!session || !session.user) {
     throw new Error('User not authenticated');
   }
+
+  let perplexityApiKey = await getUserApiKey(session.user.id);
+
+  if (!perplexityApiKey) {
+    // Use default Perplexity API key if not set and rate limit is not exceeded
+    const trial = await incrementTrialUsage(session.user.id);
+
+    if (!trial.allowed) {
+      return new Response('Free trial limit exceeded. Please add your own API key or upgrade.', {
+        status: 429,
+      });
+    }
+
+    perplexityApiKey = process.env.DEFAULT_PERPLEXITY_API_KEY!;
+  }
+
+  console.log('Using Perplexity API Key:', perplexityApiKey);
+
+  const perplexity = createPerplexity({
+    apiKey: perplexityApiKey!,
+  });
 
   const prompt = `
     You are an AI writing assistant integrated into a structured document editor like Lexical. 

@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 
+import AddAPIKeyBanner from '@/components/dashboard/add-api-key-banner';
 import CreateDocument from '@/components/dashboard/create-document';
 import DocumentCard from '@/components/dashboard/document-card';
 import { Document } from '@/types/db';
@@ -26,6 +27,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 p-4">
+      <AddAPIKeyBanner />
       <div className="flex flex-row items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Your Documents</h1>
@@ -39,7 +41,9 @@ export default async function DashboardPage() {
       </div>
       <div>
         {documents.length === 0 ? (
-          <p className="text-muted-foreground">No documents found.</p>
+          <div className="flex h-64 flex-col items-center justify-center">
+            <p className="text-muted-foreground">No documents found.</p>
+          </div>
         ) : (
           <ul className="flex flex-col gap-2">
             {documents.map((document) => (
