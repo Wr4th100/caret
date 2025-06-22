@@ -3,6 +3,8 @@ import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
 
 import { getActiveSession } from '@/actions/utils';
+import { incrementTrialUsage } from '@/lib/trial-limit';
+import { getUserApiKey } from '../utils';
 
 export async function POST(req: NextRequest) {
   const session = await getActiveSession();
@@ -12,7 +14,20 @@ export async function POST(req: NextRequest) {
 
   const { text } = await req.json();
 
-  const apiKey = process.env.PERPLEXITY_API_KEY;
+  let apiKey = await getUserApiKey(session.user.id);
+
+  if (!apiKey) {
+    // Use default Perplexity API key if not set and rate limit is not exceeded
+    const trial = await incrementTrialUsage(session.user.id);
+
+    if (!trial.allowed) {
+      return new Response('Free trial limit exceeded. Please add your own API key or upgrade.', {
+        status: 429,
+      });
+    }
+
+    apiKey = process.env.DEFAULT_PERPLEXITY_API_KEY!;
+  }
 
   if (!apiKey) {
     return NextResponse.json({ error: 'Missing Perplexity API key.' }, { status: 401 });

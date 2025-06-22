@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
-// import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
 
 import { getActiveSession } from '@/actions/utils';
@@ -15,7 +14,6 @@ export async function POST(req: NextRequest) {
 
   const { model = 'gpt-4o-mini', prompt, system } = await req.json();
 
-  //   const apiKey = process.env.PERPLEXITY_API_KEY;
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
@@ -23,7 +21,6 @@ export async function POST(req: NextRequest) {
   }
 
   const openai = createOpenAI({ apiKey });
-  //   const perplexity = createPerplexity({ apiKey });
 
   try {
     const result = await generateText({
